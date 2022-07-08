@@ -81,7 +81,7 @@ class ScreenshotDetector {
     }
 }
 
-private extension PHAsset {
+extension PHAsset {
     static func fetchLastScreenshot() -> PHAsset? {
         let options = PHFetchOptions()
 
