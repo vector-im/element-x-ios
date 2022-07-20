@@ -17,6 +17,7 @@
 import XCTest
 
 @testable import ElementX
+@testable import MatrixRustSDK
 
 @MainActor
 class LoginViewModelTests: XCTestCase {
@@ -142,5 +143,47 @@ class LoginViewModelTests: XCTestCase {
         
         // Then the password should not be included in that string.
         XCTAssertFalse("\(viewModelActionString)".contains(password), "The password must not be included in any strings.")
+    }
+    
+//    func testRust() throws {
+//        let dir = FileManager.default.temporaryDirectory.path
+//        let service = AuthenticationService(basePath: dir)
+//
+//        try service.configure(serverName: "matrix.org")
+//        try XCTAssertNil(service.authenticationIssuer())
+//        try XCTAssertTrue(service.supportsPasswordLogin())
+//
+//        try service.configure(serverName: "synapse-oidc.lab.element.dev")
+//        try XCTAssertNotNil(service.authenticationIssuer())
+//        try XCTAssertTrue(service.supportsPasswordLogin())
+//
+//        try service.configure(serverName: "mozilla.org")
+//        try XCTAssertNil(service.authenticationIssuer())
+//        try XCTAssertFalse(service.supportsPasswordLogin())
+//
+//        try service.configure(serverName: "iswell.cool")
+//        try XCTAssertNil(service.authenticationIssuer())
+//        try XCTAssertTrue(service.supportsPasswordLogin())
+//    }
+    
+    func testProxy() async throws {
+        let service = AuthenticationServiceProxy(userSessionStore: UserSessionStore(bundleIdentifier: ElementInfoPlist.cfBundleIdentifier,
+                                                                                    backgroundTaskService: UIKitBackgroundTaskService()))
+        
+        await service.configure(for: "matrix.org")
+        XCTAssertFalse(service.homeserver.loginMode.supportsOIDCFlow)
+        XCTAssertTrue(service.homeserver.loginMode.supportsPasswordFlow)
+        
+        await service.configure(for: "synapse-oidc.lab.element.dev")
+        XCTAssertTrue(service.homeserver.loginMode.supportsOIDCFlow)
+        XCTAssertFalse(service.homeserver.loginMode.supportsPasswordFlow)
+        
+        await service.configure(for: "mozilla.org")
+        XCTAssertFalse(service.homeserver.loginMode.supportsOIDCFlow)
+        XCTAssertFalse(service.homeserver.loginMode.supportsPasswordFlow)
+        
+        await service.configure(for: "iswell.cool")
+        XCTAssertFalse(service.homeserver.loginMode.supportsOIDCFlow)
+        XCTAssertTrue(service.homeserver.loginMode.supportsPasswordFlow)
     }
 }

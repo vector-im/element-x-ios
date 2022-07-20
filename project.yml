@@ -30,11 +30,14 @@ include:
 
 packages:
   MatrixRustSDK:
-    url: https://github.com/matrix-org/matrix-rust-components-swift.git
-    exactVersion: 1.0.11-alpha
-    # path: ../matrix-rust-components-swift
+    # url: https://github.com/matrix-org/matrix-rust-components-swift.git
+    # exactVersion: 1.0.11-alpha
+    path: ../matrix-rust-components-swift
   DesignKit:
     path: ./
+  AppAuth:
+    url: https://github.com/openid/AppAuth-iOS
+    majorVersion: 1.5.0
   DTCoreText:
     url: https://github.com/Cocoanetics/DTCoreText
     majorVersion: 1.6.26
